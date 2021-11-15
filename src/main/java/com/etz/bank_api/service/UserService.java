@@ -35,4 +35,8 @@ public class UserService {
          UserModel newUser =  dtoToEntity(userDTO);
         userRepository.save(newUser);
     }
+
+    public void deactivateAccount(){
+
+    }
 }

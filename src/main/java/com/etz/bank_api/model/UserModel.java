@@ -1,10 +1,6 @@
 package com.etz.bank_api.model;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.Table;
+import javax.persistence.*;
 
 import lombok.*;
 
@@ -27,5 +23,9 @@ public class UserModel {
     private String email;
     private String password;
     private LocalDate dateOfBirth;
+
+    @OneToOne(mappedBy = "user" ,cascade = CascadeType.ALL)
+    @PrimaryKeyJoinColumn
+    private AccountModel account;
     
 }

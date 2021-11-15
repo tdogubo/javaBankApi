@@ -1,12 +1,14 @@
 package com.etz.bank_api.domain;
 
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import javax.persistence.Transient;
 import java.time.LocalDate;
 import java.time.Period;
 
 @Data
+@NoArgsConstructor
 public class UserDTO {
     private String firstName;
     private String lastName;
