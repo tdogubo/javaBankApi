@@ -12,8 +12,10 @@ import java.time.LocalDate;
 @NoArgsConstructor
 public class AccountRequest {
     private Long id;
-    private Long accountNumber;
+    private String accountNumber;
     private String accountType;
     private Double accountBalance;
+    private String accountCurrency;
+    private Boolean isActive;
     private LocalDate accountCreatedOn;
 }

@@ -43,35 +43,35 @@ public class UserService {
         return isUser.orElse(null);
     }
 
-    public ResponseEntity<Response> addNewUser(UserRequest userRequest){
+    public ResponseEntity<Response<UserResponse>> addNewUser(UserRequest userRequest){
         if(userRequest.getAge() < 18){
-            return new ResponseEntity<>(new Response(false,"Age below 18"), HttpStatus.BAD_REQUEST);
+            return new ResponseEntity<>(new Response<>(false,"Age below 18"), HttpStatus.BAD_REQUEST);
 
 
         }
         UserModel newUser =  dtoToEntity(userRequest);
         UserResponse userResponse = convertEntityToDto(userRepository.save(newUser));
-        return new ResponseEntity<>(new Response(true, userResponse),HttpStatus.CREATED);
+        return new ResponseEntity<>(new Response<>(true, userResponse),HttpStatus.CREATED);
     }
 
-    public ResponseEntity<Response> getUser(Long id){
+    public ResponseEntity<Response<UserResponse>> getUser(Long id){
         UserModel user = fetchUserFromDB(id);
         if(user == null){
-            return new ResponseEntity<>(new Response(false,"User not found, register!"), HttpStatus.NOT_FOUND);
+            return new ResponseEntity<>(new Response<>(false,"User not found, register!"), HttpStatus.NOT_FOUND);
         }
         UserResponse userResponse = convertEntityToDto(user);
-        return new ResponseEntity<>(new Response(true, userResponse),HttpStatus.OK);
+        return new ResponseEntity<>(new Response<>(true, userResponse),HttpStatus.OK);
     }
 
-    public ResponseEntity<Response> updateUser(Long id,UserRequest userRequest){
+    public ResponseEntity<Response<UserResponse>> updateUser(Long id,UserRequest userRequest){
         UserModel user = fetchUserFromDB(id);
         if(user == null){
-            return new ResponseEntity<>(new Response(false, ""), HttpStatus.NO_CONTENT);
+            return new ResponseEntity<>(new Response<>(false, ""), HttpStatus.NO_CONTENT);
         }
         user.setPassword(userRequest.getPassword());
         user.setEmail(userRequest.getEmail());
         userRepository.save(user);
         UserResponse userResponse = convertEntityToDto(user);
-        return new ResponseEntity<>(new Response(true,userResponse ),HttpStatus.OK);
+        return new ResponseEntity<>(new Response<>(true,userResponse ),HttpStatus.OK);
 }
 }
