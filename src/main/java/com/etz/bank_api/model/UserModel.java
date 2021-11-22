@@ -16,6 +16,7 @@ public class UserModel {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
+    @Column(name = "user_id")
     private Long id;
 
     private String firstName;
@@ -27,5 +28,10 @@ public class UserModel {
     @OneToOne(mappedBy = "user" ,cascade = CascadeType.ALL)
     @PrimaryKeyJoinColumn
     private AccountModel account;
+    public AccountModel setAccount(AccountModel account) {
+        this.account = account;
+        account.setUser(this);
+        return account;
+    }
     
 }
