@@ -1,4 +1,4 @@
-package com.etz.bank_api.domain.request;
+package com.etz.bankapi.domain.request;
 
 
 import lombok.AllArgsConstructor;
@@ -10,7 +10,7 @@ import java.time.LocalDate;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class AccountRequest {
+public class CreateAccountRequest {
     private Long id;
     private String accountNumber;
     private String accountType;

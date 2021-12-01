@@ -1,6 +1,6 @@
-package com.etz.bank_api.repository;
+package com.etz.bankapi.repository;
 
-import com.etz.bank_api.model.AccountModel;
+import com.etz.bankapi.model.AccountModel;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.Optional;

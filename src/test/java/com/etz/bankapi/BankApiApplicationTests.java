@@ -1,4 +1,4 @@
-package com.etz.bank_api;
+package com.etz.bankapi;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;

@@ -1,4 +1,4 @@
-package com.etz.bank_api.domain.response;
+package com.etz.bankapi.domain.response;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
