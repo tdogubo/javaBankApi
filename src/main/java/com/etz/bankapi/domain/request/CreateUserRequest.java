@@ -1,15 +1,12 @@
 package com.etz.bankapi.domain.request;
 
 import lombok.Data;
-import org.hibernate.validator.constraints.ScriptAssert;
 
-import javax.persistence.Transient;
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
 import java.time.LocalDate;
-import java.time.Period;
 
 @Data
 public class CreateUserRequest {
@@ -18,9 +15,13 @@ public class CreateUserRequest {
     @NotBlank(message = "First name is required")
     private String firstName;
 
-    @NotNull(message = "Last cannot be Null")
+    @NotNull(message = "Last name cannot be Null")
     @NotBlank(message = "Last name is required")
     private String lastName;
+
+    @NotNull(message = "Address cannot be Null")
+    @NotBlank(message = "Address is required")
+    private String address;
 
     @NotBlank(message = "Email is required")
     @Email(message = "Email is not valid")
@@ -34,12 +35,4 @@ public class CreateUserRequest {
 
     @NotNull(message = "Date of birth cannot be Null")
     private LocalDate dateOfBirth;
-
-    @Transient
-    private int age;
-
-    public Integer getAge() {
-        return Period.between(dateOfBirth, LocalDate.now()).getYears();
-    }
-
 }

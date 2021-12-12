@@ -16,7 +16,7 @@ import java.util.List;
 @Table(name = "users")
 @NoArgsConstructor
 @AllArgsConstructor
-public class UserModel {
+public class User {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
@@ -29,15 +29,9 @@ public class UserModel {
     private String password;
     private String address;
     private LocalDate dateOfBirth;
-    // @OneToMany(mappedBy = "department", cascade = CascadeType.ALL, orphanRemoval = true)
-//    @JsonIgnore
-//    @OneToOne(mappedBy = "user", cascade = CascadeType.ALL)
+
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
     @JsonIgnore
-    private List<AccountModel> account;
-
-//    public void setAccount(AccountModel account) {
-//        this.account = account;
-//    }
+    private List<Account> account;
 
 }

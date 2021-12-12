@@ -12,12 +12,13 @@ import javax.persistence.Entity;
 @Getter
 @Setter
 @DiscriminatorValue("CURRENT")
-public class CurrentAccountModel extends AccountModel {
+public class CurrentAccount extends Account {
     private Long accountNumber;
+
     @Override
     public void setAccountNumber() {
         String start = "101";
-        this.accountNumber = Long.parseLong(start +(Math.round(Math.random() * 100000000)));
+        this.accountNumber = Long.parseLong(start + (Math.round(Math.random() * 100000000)));
     }
 }
 

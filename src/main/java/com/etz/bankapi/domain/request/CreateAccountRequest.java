@@ -1,21 +1,16 @@
 package com.etz.bankapi.domain.request;
 
 
-import lombok.AllArgsConstructor;
 import lombok.Data;
-import lombok.NoArgsConstructor;
 
-import java.time.LocalDate;
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 
 @Data
-@AllArgsConstructor
-@NoArgsConstructor
 public class CreateAccountRequest {
-    private Long id;
-    private String accountNumber;
+    @NotNull(message = "User Id cannot be blank")
+    @NotBlank(message = "User Id must be a number")
+    private Long userId;
     private String accountType;
-    private Double accountBalance;
-    private String accountCurrency;
-    private Boolean isActive;
-    private LocalDate accountCreatedOn;
+    private String pin;
 }

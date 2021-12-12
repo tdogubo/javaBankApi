@@ -9,9 +9,9 @@ import java.time.LocalDate;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class AccountResponse {
+public class TransactionResponse {
     private Long accountNumber;
-    private Long amount;
+    private Double amount;
     private Double accountBalance;
-    private LocalDate transactionDate;
+    private LocalDate transactionDate = LocalDate.now();
 }
