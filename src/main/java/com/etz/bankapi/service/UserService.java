@@ -26,7 +26,7 @@ public class UserService {
         return Period.between(dateOfBirth, LocalDate.now()).getYears();
     }
 
-    private CreateUserResponse convertEntityToDto(User user) {
+    protected CreateUserResponse convertEntityToDto(User user) {
         CreateUserResponse createUserResponse = new CreateUserResponse();
         createUserResponse.setId(user.getId());
         createUserResponse.setFirstName(user.getFirstName());
@@ -37,7 +37,7 @@ public class UserService {
         return createUserResponse;
     }
 
-    private User dtoToEntity(CreateUserRequest createUserRequest) {
+    protected User convertDtoToEntity(CreateUserRequest createUserRequest) {
         User user = new User();
         user.setFirstName(createUserRequest.getFirstName());
         user.setLastName(createUserRequest.getLastName());
@@ -48,7 +48,7 @@ public class UserService {
         return user;
     }
 
-    public User fetchUserFromDB(Long id) {
+    protected User fetchUserFromDB(Long id) {
         Optional<User> isUser = userRepository.findById(id);
         return isUser.orElse(null);
     }
@@ -61,12 +61,13 @@ public class UserService {
 
         }
         createUserRequest.setPassword(passwordEncoder.encode(createUserRequest.getPassword()));
-        User newUser = dtoToEntity(createUserRequest);
-        CreateUserResponse createUserResponse = convertEntityToDto(userRepository.save(newUser));
+        User newUser = convertDtoToEntity(createUserRequest);
+        userRepository.save(newUser);
+        CreateUserResponse createUserResponse = convertEntityToDto(newUser);
         return new ResponseEntity<>(new AppResponse<>(true, createUserResponse), HttpStatus.CREATED);
     }
 
-    public ResponseEntity<AppResponse<CreateUserResponse>> getUser(Long id) {
+    public ResponseEntity<AppResponse<CreateUserResponse>> retrieveUser(Long id) {
         User user = fetchUserFromDB(id);
         if (user == null) {
             return new ResponseEntity<>(new AppResponse<>(false, "User not found, register!"), HttpStatus.NOT_FOUND);

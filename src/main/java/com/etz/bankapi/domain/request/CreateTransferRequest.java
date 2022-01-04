@@ -10,6 +10,8 @@ import java.time.LocalDate;
 
 @Data
 public class CreateTransferRequest {
+    private String transactionId = "TRF" + Math.round(Math.random() * 1000000000);
+
     @NotNull(message = "Recipient's account number is required")
     private Long recipientAccountNumber;
 

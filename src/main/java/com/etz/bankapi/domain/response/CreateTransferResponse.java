@@ -7,7 +7,7 @@ import java.time.LocalDate;
 
 @Data
 @NoArgsConstructor
-public class CreateDepositResponse {
+public class CreateTransferResponse {
     private String transactionId;
     private Long accountNumber;
     private Double amount;

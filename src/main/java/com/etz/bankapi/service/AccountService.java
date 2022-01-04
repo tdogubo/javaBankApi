@@ -1,17 +1,12 @@
 package com.etz.bankapi.service;
 
+import com.etz.bankapi.config.TransactionType;
 import com.etz.bankapi.domain.request.AccountStatusRequest;
 import com.etz.bankapi.domain.request.CreateAccountRequest;
 import com.etz.bankapi.domain.request.CreateDepositRequest;
 import com.etz.bankapi.domain.request.CreateTransferRequest;
-import com.etz.bankapi.domain.response.AccountStatusResponse;
-import com.etz.bankapi.domain.response.AppResponse;
-import com.etz.bankapi.domain.response.CreateAccountResponse;
-import com.etz.bankapi.domain.response.TransactionResponse;
-import com.etz.bankapi.model.Account;
-import com.etz.bankapi.model.CurrentAccount;
-import com.etz.bankapi.model.SavingsAccount;
-import com.etz.bankapi.model.User;
+import com.etz.bankapi.domain.response.*;
+import com.etz.bankapi.model.*;
 import com.etz.bankapi.repository.AccountRepository;
 import com.etz.bankapi.repository.TransactionRepository;
 import lombok.RequiredArgsConstructor;
@@ -33,33 +28,48 @@ public class AccountService {
     private final UserService userService;
     private final PasswordEncoder passwordEncoder;
 
-    private void debitAccount(CreateTransferRequest request) {
+    protected void debitAccount(CreateTransferRequest request) {
         Optional<Account> user = accountRepository.findByAccountNumber(request.getSenderAccountNumber());
         if (user.isPresent()) {
             Account accountToBeDebited = user.get();
             if (accountToBeDebited.getIsActive() && accountToBeDebited.getAccountBalance() >= request.getAmount()) {
                 accountToBeDebited.setAccountBalance(accountToBeDebited.getAccountBalance() - request.getAmount());
             }
+            Transactions transaction = new Transactions();
+            transaction.setAmount(request.getAmount());
+            transaction.setTransactionType(TransactionType.DEBIT);
+            transaction.setAccountNumber(accountToBeDebited.getAccountNumber());
+            transaction.setAccount(accountToBeDebited);
+            transaction.setTransactionId(request.getTransactionId());
             accountRepository.save(accountToBeDebited);
+            transactionRepository.save(transaction);
         }
 
     }
 
-    private Account creditAccount(CreateDepositRequest request) {
+    protected Account creditAccount(CreateDepositRequest request) {
         Optional<Account> user = accountRepository.findByAccountNumber(request.getAccountNumber());
         if (user.isPresent()) {
             Account accountToBeCredited = user.get();
             if (accountToBeCredited.getIsActive()) {
 
                 accountToBeCredited.setAccountBalance(accountToBeCredited.getAccountBalance() + request.getAmount());
+                Transactions transaction = new Transactions();
+                transaction.setTransactionId(request.getTransactionId());
+                transaction.setAmount(request.getAmount());
+                transaction.setTransactionType(TransactionType.CREDIT);
+                transaction.setTransactionId(request.getTransactionId());
+                transaction.setAccountNumber(request.getAccountNumber());
+                transaction.setAccount(accountToBeCredited);
                 accountRepository.save(accountToBeCredited);
+                transactionRepository.save(transaction);
             }
             return accountToBeCredited;
         }
         return null;
     }
 
-    private void creditAccount(CreateTransferRequest request) {
+    protected void creditAccount(CreateTransferRequest request) {
         Optional<Account> user = accountRepository.findByAccountNumber(request.getRecipientAccountNumber());
         if (user.isPresent()) {
             Account accountToBeCredited = user.get();
@@ -67,11 +77,18 @@ public class AccountService {
 
                 accountToBeCredited.setAccountBalance(accountToBeCredited.getAccountBalance() + request.getAmount());
                 accountRepository.save(accountToBeCredited);
+                Transactions transaction = new Transactions();
+                transaction.setAmount(request.getAmount());
+                transaction.setTransactionType(TransactionType.CREDIT);
+                transaction.setAccountNumber(accountToBeCredited.getAccountNumber());
+                transaction.setAccount(accountToBeCredited);
+                transaction.setTransactionId(request.getTransactionId());
+                transactionRepository.save(transaction);
             }
         }
     }
 
-    private CreateAccountResponse accountEntityToCreateAccountResponse(Account account) {
+    protected CreateAccountResponse accountEntityToCreateAccountResponse(Account account) {
         CreateAccountResponse response = new CreateAccountResponse();
         response.setAccountNumber(account.getAccountNumber());
         response.setAccountType(account.getAccountType());
@@ -108,28 +125,30 @@ public class AccountService {
 
     }
 
-    public ResponseEntity<AppResponse<TransactionResponse>> makeDeposit(CreateDepositRequest createDepositRequest) {
-        if (!accountRepository.findByAccountNumber(createDepositRequest.getAccountNumber()).isPresent()) {
+    public ResponseEntity<AppResponse<CreateDepositResponse>> makeDeposit(CreateDepositRequest request) {
+        if (!accountRepository.findByAccountNumber(request.getAccountNumber()).isPresent()) {
             return new ResponseEntity<>(new AppResponse<>(false, "Wrong account number!!"), HttpStatus.BAD_REQUEST);
         }
-        Account account = creditAccount(createDepositRequest);
-        TransactionResponse response = new TransactionResponse();
+        Account account = creditAccount(request);
+        CreateDepositResponse response = new CreateDepositResponse();
         assert account != null;
         response.setAccountNumber(account.getAccountNumber());
-        response.setAmount(createDepositRequest.getAmount());
+        response.setTransactionId(request.getTransactionId());
+        response.setAmount(request.getAmount());
         response.setAccountBalance(account.getAccountBalance());
         return new ResponseEntity<>(new AppResponse<>(true, response), HttpStatus.CREATED);
 
     }
 
-    public ResponseEntity<AppResponse<TransactionResponse>> makeTransfer(CreateTransferRequest request) {
+    public ResponseEntity<AppResponse<CreateTransferResponse>> makeTransfer(CreateTransferRequest request) {
         Optional<Account> debitUser = accountRepository.findByAccountNumber(request.getSenderAccountNumber());
         if (debitUser.isPresent() && debitUser.get().getIsActive()) {
             if (debitUser.get().getAccountBalance() >= request.getAmount()) {
                 if (passwordEncoder.matches(request.getPin(), debitUser.get().getPin())) {
                     creditAccount(request);
                     debitAccount(request);
-                    TransactionResponse response = new TransactionResponse();
+                    CreateTransferResponse response = new CreateTransferResponse();
+                    response.setTransactionId(request.getTransactionId());
                     response.setAccountBalance(debitUser.get().getAccountBalance());
                     response.setAmount(request.getAmount());
                     response.setAccountNumber(debitUser.get().getAccountNumber());

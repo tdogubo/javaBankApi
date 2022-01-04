@@ -9,6 +9,7 @@ import javax.validation.constraints.Size;
 
 @Data
 public class CreateDepositRequest {
+    private String transactionId = "REF" + Math.round(Math.random() * 1000000000);
     @NotNull(message = "Account number is required")
     @Size(min = 10, max = 10, message = "Account number incomplete must be 10 digits")
     private Long accountNumber;

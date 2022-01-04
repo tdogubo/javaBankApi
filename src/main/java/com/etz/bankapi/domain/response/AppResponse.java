@@ -5,9 +5,9 @@ import lombok.Getter;
 
 @Getter
 public class AppResponse<T> {
-    boolean status;
-    T data;
-    String message;
+    private final boolean status;
+    private T data;
+    private String message;
 
     public AppResponse(final boolean status, final String message) {
         this.status = status;

@@ -18,7 +18,7 @@ public class UserController {
 
     @GetMapping(path = "/{id}")
     public ResponseEntity<AppResponse<CreateUserResponse>> loginUser(@PathVariable("id") Long userId) {
-        return userService.getUser(userId);
+        return userService.retrieveUser(userId);
     }
 
     @PostMapping
