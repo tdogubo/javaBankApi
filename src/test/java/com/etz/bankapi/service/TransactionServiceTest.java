@@ -1,5 +1,6 @@
 package com.etz.bankapi.service;
 
+import com.etz.bankapi.config.Mapper;
 import com.etz.bankapi.repository.TransactionRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -23,10 +24,13 @@ class TransactionServiceTest {
     @Autowired
     private TransactionService testService;
 
+
+    protected Mapper mapper;
+
     @BeforeEach
     void setUp() {
 
-        testService = new TransactionService(testRepo);
+        testService = new TransactionService(testRepo, mapper);
     }
 
     @Test

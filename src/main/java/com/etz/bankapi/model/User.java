@@ -1,5 +1,6 @@
 package com.etz.bankapi.model;
 
+import com.etz.bankapi.config.UserType;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -27,11 +28,17 @@ public class User {
     private String lastName;
     private String email;
     private String password;
+    private String phoneNumber;
     private String address;
     private LocalDate dateOfBirth;
+    private UserType type;
+    private String lga;
+
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
     @JsonIgnore
     private List<Account> account;
+
+
 
 }

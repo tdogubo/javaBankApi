@@ -1,5 +1,6 @@
 package com.etz.bankapi.service;
 
+import com.etz.bankapi.config.Mapper;
 import com.etz.bankapi.domain.response.AppResponse;
 import com.etz.bankapi.domain.response.TransactionResponse;
 import com.etz.bankapi.model.Transactions;
@@ -18,17 +19,14 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class TransactionService {
     private final TransactionRepository transactionRepository;
+    private final Mapper mapper;
+
 
 
     public ResponseEntity<AppResponse<TransactionResponse>> getTransaction(String transactionId) {
         Optional<Transactions> transaction = transactionRepository.findById(transactionId);
         if (transaction.isPresent()) {
-            TransactionResponse response = new TransactionResponse();
-            response.setAccountNumber(transaction.get().getAccountNumber());
-            response.setAmount(transaction.get().getAmount());
-            response.setTransactionId(transaction.get().getTransactionId());
-            response.setTransactionType(transaction.get().getTransactionType());
-            response.setTransactionDate(transaction.get().getTransactionDate());
+            TransactionResponse response = mapper.modelMapper().map(transaction.get(), TransactionResponse.class);
             return new ResponseEntity<>(new AppResponse<>(true, response), HttpStatus.OK);
 
         }

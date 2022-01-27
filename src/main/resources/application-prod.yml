@@ -2,8 +2,6 @@
 #           Database Configuration           #
 ##############################################
 spring:
-  profiles:
-    active: local
   datasource:
     url: jdbc:mysql://localhost:3306/bankdb
     username: root
@@ -16,4 +14,4 @@ spring:
 
     # Hibernate ddl auto (create, create-drop, validate, update)
     hibernate:
-      ddl-auto: create
+      ddl-auto: update

@@ -14,4 +14,6 @@ public class CreateUserResponse {
     private String email;
     private LocalDate dateOfBirth;
     private String address;
+    private String phoneNumber;
+    private String lga;
 }

@@ -33,6 +33,17 @@ public class CreateUserRequest {
             message = "Password must contain at least 8 characters, one digit, one uppercase, one lowercase, one special character and no whitespace")
     private String password;
 
-    @NotNull(message = "Date of birth cannot be Null")
+    @NotNull(message = "PhoneNumber cannot be Null")
+    @NotBlank(message = "PhoneNumber is required")
+    private String phoneNumber;
+
+    @NotNull(message = "User type cannot be Null")
+    @NotBlank(message = "User type is required")
+    private String type;
+
+    @NotNull(message = "LGA cannot be Null")
+    private String lga;
+
+    @NotNull(message = "date of birth cannot be Null")
     private LocalDate dateOfBirth;
 }

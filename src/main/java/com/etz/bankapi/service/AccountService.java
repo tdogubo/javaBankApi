@@ -1,5 +1,7 @@
 package com.etz.bankapi.service;
 
+import com.etz.bankapi.config.Encoder;
+import com.etz.bankapi.config.Mapper;
 import com.etz.bankapi.config.TransactionType;
 import com.etz.bankapi.domain.request.AccountStatusRequest;
 import com.etz.bankapi.domain.request.CreateAccountRequest;
@@ -14,7 +16,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;
@@ -26,9 +27,10 @@ public class AccountService {
     private final AccountRepository accountRepository;
     private final TransactionRepository transactionRepository;
     private final UserService userService;
-    private final PasswordEncoder passwordEncoder;
+    private final Encoder encoder;
+    private final Mapper mapper;
 
-    protected void debitAccount(CreateTransferRequest request) {
+    private void debitAccount(CreateTransferRequest request) {
         Optional<Account> user = accountRepository.findByAccountNumber(request.getSenderAccountNumber());
         if (user.isPresent()) {
             Account accountToBeDebited = user.get();
@@ -47,7 +49,7 @@ public class AccountService {
 
     }
 
-    protected Account creditAccount(CreateDepositRequest request) {
+    private Account creditAccount(CreateDepositRequest request) {
         Optional<Account> user = accountRepository.findByAccountNumber(request.getAccountNumber());
         if (user.isPresent()) {
             Account accountToBeCredited = user.get();
@@ -69,7 +71,7 @@ public class AccountService {
         return null;
     }
 
-    protected void creditAccount(CreateTransferRequest request) {
+    private void creditAccount(CreateTransferRequest request) {
         Optional<Account> user = accountRepository.findByAccountNumber(request.getRecipientAccountNumber());
         if (user.isPresent()) {
             Account accountToBeCredited = user.get();
@@ -88,13 +90,6 @@ public class AccountService {
         }
     }
 
-    protected CreateAccountResponse accountEntityToCreateAccountResponse(Account account) {
-        CreateAccountResponse response = new CreateAccountResponse();
-        response.setAccountNumber(account.getAccountNumber());
-        response.setAccountType(account.getAccountType());
-        return response;
-    }
-
     public ResponseEntity<AppResponse<CreateAccountResponse>> createAccount(CreateAccountRequest createAccountRequest) {
         try {
 
@@ -109,14 +104,16 @@ public class AccountService {
             if (accountRepository.findByAccountNumber(account.getAccountNumber()).isPresent()) {
                 createAccount(createAccountRequest);
             }
-            account.setPin(passwordEncoder.encode(createAccountRequest.getPin()));
+            account.setPin(encoder.passwordEncoder().encode(createAccountRequest.getPin()));
             account.setAccountType(createAccountRequest.getAccountType());
             account.setAccountBalance(0.0);
             account.setIsActive(true);
             account.setUser(user);
             user.setAccount(account.getUser().getAccount());
+
             accountRepository.save(account);
-            CreateAccountResponse response = accountEntityToCreateAccountResponse(account);
+
+            CreateAccountResponse response = mapper.modelMapper().map(account, CreateAccountResponse.class); //accountEntityToCreateAccountResponse(account);
             return new ResponseEntity<>(new AppResponse<>(true, response), HttpStatus.CREATED);
         } catch (DataIntegrityViolationException e) {
             log.info(e.getLocalizedMessage());
@@ -144,7 +141,7 @@ public class AccountService {
         Optional<Account> debitUser = accountRepository.findByAccountNumber(request.getSenderAccountNumber());
         if (debitUser.isPresent() && debitUser.get().getIsActive()) {
             if (debitUser.get().getAccountBalance() >= request.getAmount()) {
-                if (passwordEncoder.matches(request.getPin(), debitUser.get().getPin())) {
+                if (encoder.passwordEncoder().matches(request.getPin(), debitUser.get().getPin())) {
                     creditAccount(request);
                     debitAccount(request);
                     CreateTransferResponse response = new CreateTransferResponse();

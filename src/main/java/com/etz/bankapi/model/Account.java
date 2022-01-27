@@ -37,7 +37,7 @@ public class Account {
     private LocalDate accountCreatedOn;
 
     @ManyToOne(cascade = CascadeType.ALL)
-    @JoinColumn(foreignKey = @ForeignKey(name = "user_id"), name = "user_id")
+    @JoinColumn(foreignKey = @ForeignKey(name = "client_id"), name = "client_id")
     private User user;
 
     @OneToMany(mappedBy = "account", cascade = CascadeType.ALL)
