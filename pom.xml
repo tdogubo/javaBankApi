@@ -16,7 +16,7 @@
 	<properties>
 		<java.version>8</java.version>
 		<checkstyle-maven-plugin.version>3.0.0</checkstyle-maven-plugin.version>
-		<checkstyle.latest.version>8.18</checkstyle.latest.version>
+		<checkstyle.latest.version>8.29</checkstyle.latest.version>
 	</properties>
 	<dependencies>
 		<dependency>
